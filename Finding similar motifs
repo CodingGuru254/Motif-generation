@@ -1,0 +1,39 @@
+# Motif-generation
+def edit_distance(s1, s2):
+    """Compute Levenshtein edit distance between s1 and s2."""
+    dp = [[0] * (len(s2)+1) for _ in range(len(s1)+1)]
+
+    for i in range(len(s1)+1):
+        dp[i][0] = i
+    for j in range(len(s2)+1):
+        dp[0][j] = j
+
+    for i in range(1, len(s1)+1):
+        for j in range(1, len(s2)+1):
+            cost = 0 if s1[i-1] == s2[j-1] else 1
+            dp[i][j] = min(
+                dp[i-1][j] + 1,     # deletion
+                dp[i][j-1] + 1,     # insertion
+                dp[i-1][j-1] + cost # substitution
+            )
+    return dp[len(s1)][len(s2)]
+k = 2
+s = "ACGTAG"
+t = "ACGGATCGGCATCGT"
+
+len_s = len(s)
+results = []
+for i in range(len(t)):
+    for L in range(len_s - k, len_s + k + 1):
+        if L <= 0:
+            continue
+        if i + L > len(t):
+            continue
+        sub = t[i:i+L]
+        dist = edit_distance(s, sub)
+        if dist <= k:
+            results.append((i, L))
+
+# Print results
+for pos, length in results:
+    print(pos, length)
